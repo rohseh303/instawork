@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Team Member</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 360px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            text-align: center;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input[type=text], input[type=email], input[type=tel] {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type=submit], button {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type=submit]:hover {
+            background-color: #45a049;
+        }
+        .role-section {
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+        }
+        .role-selector {
+            list-style: none;
+            padding: 0;
+        }
+
+        .role-selector li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .role-selector li:last-child {
+            border-bottom: none;
+        }
+
+        .role-selector label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: right;
+        }
+        .save-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            display: inline-block;
+            text-align: center;
+        }
+        .save-btn:hover {
+            background-color: #0056b3;
+        }
+        .delete-button {
+            background-color: #ffffff;
+            color: red;
+            border: 2px solid gray;
+            padding: 10px;
+            font-size: 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            display: inline-block;
+            text-align: center;
+        }
+        .delete-button:hover {
+            background-color: #bdbab9;
+        }
+        label {
+            padding: 10px 0px;
+            display: block;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <form method="post" action="">
+            {% csrf_token %}
+    
+            <h1>Add a team member</h1>
+            <p>Set email, location, and role.</p>
+    
+            <div>
+                <h3>Info</h3>
+                {{ form.first_name }}
+                {{ form.last_name }}
+                {{ form.email }}
+                {{ form.phone_number }}
+            </div>
+            
+            <div>
+                <h3>Role</h3>
+                <ul class="role-selector">
+                    {% for choice in form.role %}
+                        <li>
+                            <label>
+                                {% if choice.choice_label == 'Regular' %}
+                                    {{ choice.choice_label }} - Can't delete members
+                                {% elif choice.choice_label == 'Admin' %}
+                                    {{ choice.choice_label }} - Can delete members
+                                {% endif %}
+                                {{ choice.tag }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="button-container">
+                {% if member.id %}
+                    <input type="hidden" name="member_id" value="{{ member.id }}">
+                {% endif %}
+                <button type="submit" class="save-btn">Save</button>
+            </div>
+        </form>
+
+        {% if member.id %}
+        <form action="{% url 'team_member_delete' member.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this member?')" class="delete-button">Delete Member</button>
+        </form>
+        {% endif %}
+    </div>
+</body>
+
+</html>
